@@ -1,0 +1,220 @@
+---
+import Base from '../layouts/Base.astro';
+import { withBase } from '../lib/site';
+
+const days = [
+  {
+    day: 'Tue',
+    date: 'July 7',
+    title: 'Arrival day',
+    body: 'Keep it easy. Neighborhood pool once everyone lands, low-effort dinner at home.',
+    links: [{ slug: 'neighborhood-pool', label: 'Neighborhood pool' }],
+  },
+  {
+    day: 'Wed',
+    date: 'July 8',
+    title: 'Berries & ice',
+    body: 'Morning blueberry picking (call the farm first — mid-July is the tail of the season), then spend the furnace hours ice skating or in a museum.',
+    links: [
+      { slug: 'buckwheat-farm', label: 'Buckwheat Farm' },
+      { slug: 'polar-ice-cary', label: 'Polar Ice Cary' },
+      { slug: 'nc-museum-natural-sciences', label: 'NC Museum of Natural Sciences' },
+    ],
+  },
+  {
+    day: 'Thu',
+    date: 'July 9',
+    title: 'Carolina Beach overnight',
+    body: 'Leave Cary ~9:30–10am. Boardwalk rides and arcade, then Boardwalk Blast: live music 6:30–9:30pm and free fireworks at 9.',
+    links: [
+      { slug: 'carolina-beach-overnight', label: 'The full beach plan' },
+      { slug: 'boardwalk-blast-fireworks', label: 'Boardwalk Blast' },
+    ],
+  },
+  {
+    day: 'Fri',
+    date: 'July 10',
+    title: 'Donuts, fish, home',
+    body: 'Britt’s Donuts (cash only) → NC Aquarium at Fort Fisher → on the road by 2pm to beat Raleigh rush. Optional nightcap: Sidecar Social Club on the Koka Booth lawn at 8, or the free Wicked screening at Moore Square.',
+    links: [
+      { slug: 'koka-booth-sidecar', label: 'Koka Booth concert' },
+      { slug: 'wicked-moore-square', label: 'Wicked at Moore Square' },
+    ],
+  },
+  {
+    day: 'Sat',
+    date: 'July 11',
+    title: 'Send-off',
+    body: 'Pool or splash pad morning — or the Car Showcase at Dix Park (10–2) and the free market at Raleigh Iron Works (11–4). Putt putt or Topgolf once the sun drops, then a big send-off dinner.',
+    links: [
+      { slug: 'dix-park-car-showcase', label: 'Dix Park Car Showcase' },
+      { slug: 'raleigh-iron-works-market', label: 'Iron Works market' },
+      { slug: 'topgolf-durham', label: 'Topgolf' },
+      { slug: 'kanki-hibachi', label: 'Hibachi send-off' },
+    ],
+  },
+];
+
+const decisions = [
+  { text: 'Beach overnight: yes or no? If yes, book the Carolina Beach hotel TODAY — Thursday night helps.', slug: 'carolina-beach-overnight' },
+  { text: 'Duke Lemur Center: interested? July sells out — book immediately if so.', slug: 'duke-lemur-center' },
+  { text: 'Wet’n Wild: the up-to-45%-off online promo ends Monday July 6 — decide fast.', slug: 'wet-n-wild-emerald-pointe' },
+  { text: 'NC Zoo: recommend skipping — 75-minute drive and mostly outdoors in this heat.', slug: 'nc-zoo' },
+  { text: 'Which kid-facing picks will actually land? Ask your guests before booking.' },
+];
+
+const ruledOut = [
+  { name: 'Durham Bulls', why: 'away all week — home again July 17' },
+  { name: 'West Point on the Eno', why: 'closed July 2026 – Jan 2027 for a $5.3M renovation' },
+  { name: 'Eno Quarry', why: 'locals call it “deadly even” with kids' },
+  { name: 'Prairie Ridge Ecostation', why: 'closed all summer 2026' },
+  { name: 'Great Wolf Lodge Concord', why: 'day passes exist, but it’s 2h15 away' },
+  { name: 'First Friday & the Food Truck Rodeo', why: 'both happened before the visit (Jul 3–4)' },
+  { name: 'Juniper Level Botanical Garden', why: 'closed that week' },
+  { name: 'American Tobacco Trail, Falls Lake beaches, Sandy Cliff Overlook', why: 'too sunny, bacteria closures, or thin shade — skip in this heat' },
+];
+---
+
+<Base title="The Plan" description="Day-by-day shape of the week, decisions needed, and what got ruled out.">
+  <main class="wrap plan">
+    <header class="plan-head">
+      <p class="meta-caps eyebrow">The rough shape · Tue Jul 7 – Sat Jul 11</p>
+      <h1>The Day-by-Day <em>Plan</em></h1>
+      <p class="lede">
+        A skeleton, not a schedule — swap anything for something from
+        <a href={withBase('/')}>the list</a> as weather and moods dictate.
+      </p>
+    </header>
+
+    <ol class="timeline">
+      {days.map((d) => (
+        <li>
+          <div class="day-tag">
+            <span class="day-name">{d.day}</span>
+            <span class="day-date meta-caps">{d.date}</span>
+          </div>
+          <div class="day-body">
+            <h2>{d.title}</h2>
+            <p>{d.body}</p>
+            <div class="day-links">
+              {d.links.map((l) => <a href={withBase(`/activities/${l.slug}/`)}>{l.label} →</a>)}
+            </div>
+          </div>
+        </li>
+      ))}
+    </ol>
+
+    <section class="panel decisions">
+      <h2>☐ Decisions needed</h2>
+      <ul>
+        {decisions.map((d) => (
+          <li>
+            {d.slug ? <a href={withBase(`/activities/${d.slug}/`)}>{d.text}</a> : d.text}
+          </li>
+        ))}
+      </ul>
+    </section>
+
+    <section class="panel ruled-out">
+      <h2>Ruled out (so you stop re-considering them)</h2>
+      <ul>
+        {ruledOut.map((r) => (
+          <li><s>{r.name}</s> — {r.why}</li>
+        ))}
+      </ul>
+    </section>
+  </main>
+</Base>
+
+<style>
+  .plan { padding-top: 3rem; }
+
+  .eyebrow { color: var(--terra); margin-bottom: 1rem; }
+
+  h1 {
+    font-size: clamp(2.6rem, 7vw, 4.8rem);
+    font-weight: 650;
+  }
+
+  h1 em { font-style: italic; font-weight: 420; color: var(--terra); }
+
+  .lede {
+    font-size: 1.15rem;
+    color: var(--ink-soft);
+    max-width: 36em;
+    margin-top: 1rem;
+  }
+
+  .lede a { color: var(--terra); }
+
+  .timeline {
+    list-style: none;
+    margin: 3rem 0 0;
+    padding: 0;
+    display: grid;
+    gap: 1.1rem;
+  }
+
+  .timeline li {
+    display: grid;
+    grid-template-columns: 108px 1fr;
+    gap: 1.4rem;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 1.3rem 1.5rem;
+  }
+
+  @media (max-width: 620px) {
+    .timeline li { grid-template-columns: 1fr; gap: 0.6rem; }
+  }
+
+  .day-tag { border-right: 3px solid var(--gold); padding-right: 1rem; }
+
+  @media (max-width: 620px) {
+    .day-tag { border-right: none; border-bottom: 3px solid var(--gold); padding: 0 0 0.5rem; }
+  }
+
+  .day-name {
+    display: block;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 2.4rem;
+    line-height: 1;
+    color: var(--terra);
+  }
+
+  .day-body h2 { font-size: 1.5rem; font-weight: 680; margin-bottom: 0.4rem; }
+  .day-body p { color: var(--ink-soft); margin-bottom: 0.7em; }
+
+  .day-links { display: flex; flex-wrap: wrap; gap: 0.4rem 1.2rem; }
+
+  .day-links a {
+    font-size: 0.82rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--terra);
+  }
+
+  .day-links a:hover { text-decoration: underline; }
+
+  .panel {
+    margin-top: 3rem;
+    border-radius: 12px;
+    padding: 1.5rem 1.8rem;
+  }
+
+  .panel h2 { font-size: 1.6rem; font-weight: 680; margin-bottom: 0.9rem; }
+  .panel ul { margin: 0; padding-left: 1.2em; }
+  .panel li { margin-bottom: 0.55em; }
+
+  .decisions { border: 2px solid var(--terra); background: color-mix(in srgb, var(--terra) 5%, var(--card)); }
+  .decisions li::marker { color: var(--terra); }
+  .decisions a { text-underline-offset: 3px; }
+  .decisions a:hover { color: var(--terra); }
+
+  .ruled-out { border: 1px solid var(--line); background: var(--paper-2); color: var(--ink-soft); }
+  .ruled-out s { color: var(--ink); }
+</style>

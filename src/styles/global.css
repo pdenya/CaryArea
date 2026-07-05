@@ -1,0 +1,326 @@
+/* ————— The Cary Area Field Guide — sun-bleached editorial ————— */
+
+:root {
+  --paper: #f5ecd9;
+  --paper-2: #eee1c6;
+  --card: #fbf5e8;
+  --ink: #2b2014;
+  --ink-soft: #6d5c45;
+  --line: #d9c7a3;
+  --line-soft: #e6d8ba;
+
+  --terra: #c2431e;
+  --gold: #dfa032;
+  --gold-deep: #a8721a;
+  --aqua: #0f7c8c;
+  --pine: #45633e;
+  --plum: #8a4a63;
+  --denim: #3e5f8a;
+  --clay: #7c5a38;
+
+  --font-display: 'Fraunces Variable', Georgia, 'Times New Roman', serif;
+  --font-body: 'Karla Variable', 'Gill Sans', 'Helvetica Neue', sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+html {
+  background: var(--paper);
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  color: var(--ink);
+  background:
+    radial-gradient(1200px 600px at 85% -100px, rgb(223 160 50 / 0.16), transparent 70%),
+    var(--paper);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* film grain */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  pointer-events: none;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  font-variation-settings: 'SOFT' 40, 'WONK' 1;
+  line-height: 1.06;
+  margin: 0;
+  letter-spacing: -0.015em;
+}
+
+a { color: inherit; }
+p { margin: 0 0 1em; }
+
+.wrap {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 clamp(1.1rem, 4vw, 2.5rem);
+}
+
+/* mono-caps meta text */
+.meta-caps {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+/* ————— header ————— */
+.site-header {
+  border-bottom: 3px double var(--ink);
+  background: color-mix(in srgb, var(--paper) 86%, transparent);
+  backdrop-filter: blur(6px);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.site-header .wrap {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-top: 0.8rem;
+  padding-bottom: 0.7rem;
+}
+
+.wordmark {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.15rem;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.wordmark .sun-dot {
+  display: inline-block;
+  width: 0.6em;
+  height: 0.6em;
+  border-radius: 50%;
+  background: var(--terra);
+  margin: 0 0.3em 0 0.05em;
+}
+
+.site-nav {
+  display: flex;
+  gap: 1.4rem;
+}
+
+.site-nav a {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+  padding-bottom: 2px;
+}
+
+.site-nav a:hover { border-bottom-color: var(--terra); }
+
+/* ————— footer ————— */
+.site-footer {
+  margin-top: 5rem;
+  border-top: 3px double var(--ink);
+  padding: 2rem 0 3rem;
+}
+
+.site-footer .wrap {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 1rem;
+  color: var(--ink-soft);
+  font-size: 0.9rem;
+}
+
+/* ————— badges & chips ————— */
+.heat-badge {
+  --c: var(--ink);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35em;
+  font-size: 0.66rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--c);
+  background: color-mix(in srgb, var(--c) 11%, var(--card));
+  border: 1px solid color-mix(in srgb, var(--c) 40%, var(--card));
+  border-radius: 999px;
+  padding: 0.28em 0.75em;
+  white-space: nowrap;
+}
+
+.flag {
+  display: inline-block;
+  font-size: 0.66rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border-radius: 4px;
+  padding: 0.25em 0.6em;
+}
+
+.flag-book { background: var(--ink); color: var(--paper); }
+.flag-warn { background: color-mix(in srgb, var(--terra) 14%, var(--card)); color: var(--terra); border: 1px solid color-mix(in srgb, var(--terra) 45%, var(--card)); }
+
+/* ————— activity card ————— */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(285px, 1fr));
+  gap: 1.15rem;
+}
+
+.activity-card {
+  --cat: var(--ink);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-top: 5px solid var(--cat);
+  border-radius: 10px;
+  padding: 1.05rem 1.15rem 1.15rem;
+  text-decoration: none;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.activity-card:hover {
+  transform: translateY(-4px) rotate(-0.4deg);
+  box-shadow: 0 18px 34px -16px rgb(70 45 10 / 0.4);
+}
+
+.activity-card .card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.activity-card h3 {
+  font-size: 1.32rem;
+  font-weight: 620;
+  line-height: 1.12;
+}
+
+.activity-card .blurb {
+  color: var(--ink-soft);
+  font-size: 0.93rem;
+  line-height: 1.45;
+  margin: 0;
+  flex: 1;
+}
+
+.activity-card .card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem 0.9rem;
+  border-top: 1px solid var(--line-soft);
+  padding-top: 0.6rem;
+}
+
+.activity-card .card-date {
+  color: var(--plum);
+  font-weight: 800;
+}
+
+/* ————— section headers (homepage) ————— */
+.cat-section {
+  scroll-margin-top: 90px;
+  margin-top: 4.5rem;
+}
+
+.cat-header {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.4rem 1.1rem;
+  border-bottom: 3px solid var(--ink);
+  margin-bottom: 1.4rem;
+  padding-bottom: 0.5rem;
+  position: relative;
+}
+
+.cat-header .cat-num {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 2.6rem;
+  color: transparent;
+  -webkit-text-stroke: 1.4px var(--cat, var(--ink));
+  line-height: 1;
+}
+
+.cat-header h2 {
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
+  font-weight: 680;
+}
+
+.cat-header .cat-count {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 1.15rem;
+  color: var(--cat, var(--ink-soft));
+}
+
+.cat-header .cat-desc {
+  flex-basis: 100%;
+  font-family: var(--font-display);
+  font-style: italic;
+  color: var(--ink-soft);
+  font-size: 1.05rem;
+}
+
+/* ————— prose (detail + plan pages) ————— */
+.prose { max-width: 66ch; }
+.prose p { margin: 0 0 1.05em; }
+.prose ul { padding-left: 1.2em; margin: 0 0 1.2em; }
+.prose li { margin-bottom: 0.45em; }
+.prose li::marker { color: var(--terra); }
+.prose strong { font-weight: 760; }
+.prose a { color: var(--terra); text-decoration-thickness: 1.5px; text-underline-offset: 2px; }
+.prose h3 {
+  font-size: 1.35rem;
+  margin: 1.6em 0 0.6em;
+}
+
+/* ————— buttons ————— */
+.btn {
+  display: inline-block;
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration: none;
+  text-align: center;
+  border-radius: 7px;
+  padding: 0.72em 1.1em;
+  border: 2px solid var(--ink);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.btn:hover { transform: translateY(-2px); box-shadow: 0 8px 16px -8px rgb(70 45 10 / 0.5); }
+.btn-solid { background: var(--ink); color: var(--paper); }
+.btn-ghost { background: transparent; color: var(--ink); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}

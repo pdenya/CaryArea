@@ -1,0 +1,28 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { CATEGORIES, HEAT, withBase } from '../lib/site';
+
+interface Props {
+  activity: CollectionEntry<'activities'>;
+}
+
+const { activity } = Astro.props;
+const { title, blurb, category, area, cost, heat, date, warning, bookAhead } = activity.data;
+const cat = CATEGORIES[category];
+const heatInfo = HEAT[heat];
+---
+
+<a class="activity-card" href={withBase(`/activities/${activity.id}/`)} style={`--cat:${cat.color}`}>
+  <div class="card-top">
+    <h3>{title}</h3>
+    <span class="heat-badge" style={`--c:${heatInfo.color}`}>{heatInfo.label}</span>
+  </div>
+  {date && <span class="meta-caps card-date">{date}</span>}
+  <p class="blurb">{blurb}</p>
+  <div class="card-meta">
+    <span class="meta-caps">{area}</span>
+    <span class="meta-caps" style="color:var(--ink);">{cost}</span>
+    {bookAhead && <span class="flag flag-book">Book ahead</span>}
+    {warning && <span class="flag flag-warn">Heads up</span>}
+  </div>
+</a>

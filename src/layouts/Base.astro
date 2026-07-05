@@ -1,0 +1,46 @@
+---
+import '@fontsource-variable/fraunces';
+import '@fontsource-variable/karla';
+import '../styles/global.css';
+import { SITE, withBase } from '../lib/site';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const { title, description = 'A field guide to beating the heat around Cary, Raleigh & Durham — July 7–11, 2026.' } = Astro.props;
+const pageTitle = title ? `${title} · ${SITE.title}` : SITE.title;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/svg+xml" href={withBase('/favicon.svg')} />
+    <title>{pageTitle}</title>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="wrap">
+        <a class="wordmark" href={withBase('/')}><span class="sun-dot"></span>THE CARY AREA <em style="font-weight:400;">— Field Guide</em></a>
+        <nav class="site-nav">
+          <a href={withBase('/#events')}>This Week</a>
+          <a href={withBase('/plan/')}>The Plan</a>
+          <a href={withBase('/#water')}>The List</a>
+        </nav>
+      </div>
+    </header>
+
+    <slot />
+
+    <footer class="site-footer">
+      <div class="wrap">
+        <span>№ 1 — Heat Wave Edition · July 7–11, 2026</span>
+        <span>Researched July 5 · Cary — Raleigh — Durham, N.C.</span>
+      </div>
+    </footer>
+  </body>
+</html>

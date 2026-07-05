@@ -1,0 +1,242 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import ActivityCard from '../components/ActivityCard.astro';
+import { CATEGORIES, CATEGORY_ORDER, eventDay, withBase } from '../lib/site';
+
+const all = await getCollection('activities');
+
+const byCategory = CATEGORY_ORDER.map((key) => {
+  const items = all.filter((a) => a.data.category === key);
+  items.sort((a, b) =>
+    key === 'events'
+      ? eventDay(a.data.date) - eventDay(b.data.date) || a.data.title.localeCompare(b.data.title)
+      : a.data.title.localeCompare(b.data.title)
+  );
+  return { key, ...CATEGORIES[key], items };
+});
+
+const alerts = [
+  { slug: 'wet-n-wild-emerald-pointe', text: 'Wet’n Wild online discount (up to 45% off) ends Mon Jul 6', chip: 'Ends Jul 6' },
+  { slug: 'carolina-beach-overnight', text: 'Beach overnight? Carolina Beach hotels for fireworks night — book today', chip: 'Book today' },
+  { slug: 'duke-lemur-center', text: 'Duke Lemur Center sells out in July — reserve immediately if wanted', chip: 'Sells out' },
+  { slug: 'fantasy-lake-adventure-park', text: 'Fantasy Lake sessions sell out in July — buy passes + waivers online', chip: 'Sells out' },
+];
+---
+
+<Base>
+  <section class="hero">
+    <div class="wrap hero-inner">
+      <div class="sun" aria-hidden="true"></div>
+      <p class="meta-caps eyebrow">Field Guide № 1 · Cary — Raleigh — Durham · July 7–11, 2026</p>
+      <h1>
+        It’s 98° in the shade.<br />
+        <em>We have a plan.</em>
+      </h1>
+      <p class="lede">
+        {all.length} researched ways to have a great week around the
+        Triangle — every one sorted by how it handles a heat wave.
+      </p>
+      <div class="strategy" role="list">
+        <span role="listitem"><b>Mornings & evenings</b> — anything outdoors</span>
+        <span role="listitem"><b>12–5pm</b> — air conditioning or water, no exceptions</span>
+        <span role="listitem"><b>Always</b> — sunscreen, hats, water bottles</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap alerts">
+    <h2 class="alerts-title">⏱ Decide fast</h2>
+    <ul>
+      {alerts.map((a) => (
+        <li>
+          <span class="flag flag-warn">{a.chip}</span>
+          <a href={withBase(`/activities/${a.slug}/`)}>{a.text}</a>
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <nav class="wrap toc" aria-label="Categories">
+    {byCategory.map((c) => (
+      <a href={withBase(`/#${c.key}`)} style={`--cat:${c.color}`}>
+        <span class="toc-num">{c.num}</span>
+        <span class="toc-label">{c.label}</span>
+        <span class="toc-count">{c.items.length}</span>
+      </a>
+    ))}
+    <a href={withBase('/plan/')} class="toc-plan">
+      <span class="toc-num">✳</span>
+      <span class="toc-label">The Day-by-Day Plan</span>
+      <span class="toc-count">→</span>
+    </a>
+  </nav>
+
+  <main class="wrap">
+    {byCategory.map((c) => (
+      <section class="cat-section" id={c.key}>
+        <header class="cat-header" style={`--cat:${c.color}`}>
+          <span class="cat-num">{c.num}</span>
+          <h2>{c.label}</h2>
+          <span class="cat-count">× {c.items.length}</span>
+          <span class="cat-desc">{c.desc}</span>
+        </header>
+        <div class="card-grid">
+          {c.items.map((activity) => <ActivityCard activity={activity} />)}
+        </div>
+      </section>
+    ))}
+  </main>
+</Base>
+
+<style>
+  .hero {
+    position: relative;
+    overflow: hidden;
+    border-bottom: 1px solid var(--line);
+    background: linear-gradient(180deg, color-mix(in srgb, var(--gold) 10%, var(--paper)), var(--paper));
+  }
+
+  .hero-inner {
+    position: relative;
+    padding-top: clamp(3.5rem, 8vw, 6rem);
+    padding-bottom: clamp(2.5rem, 6vw, 4.5rem);
+  }
+
+  .sun {
+    position: absolute;
+    top: -140px;
+    right: -120px;
+    width: 560px;
+    height: 560px;
+    background:
+      radial-gradient(circle, var(--gold) 0 26%, transparent 27%),
+      repeating-conic-gradient(var(--gold) 0deg 4deg, transparent 4deg 13deg);
+    -webkit-mask: radial-gradient(circle, #000 0 62%, transparent 72%);
+    mask: radial-gradient(circle, #000 0 62%, transparent 72%);
+    opacity: 0.3;
+    animation: sunspin 140s linear infinite;
+    pointer-events: none;
+  }
+
+  @keyframes sunspin { to { transform: rotate(360deg); } }
+
+  .eyebrow { color: var(--terra); margin-bottom: 1.2rem; }
+
+  h1 {
+    font-size: clamp(2.6rem, 7.2vw, 5.4rem);
+    font-weight: 640;
+    max-width: 14em;
+  }
+
+  h1 em {
+    font-style: italic;
+    font-weight: 420;
+    color: var(--terra);
+  }
+
+  .lede {
+    font-size: clamp(1.05rem, 2vw, 1.3rem);
+    color: var(--ink-soft);
+    max-width: 34em;
+    margin: 1.4rem 0 1.8rem;
+  }
+
+  .strategy {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+
+  .strategy span {
+    font-size: 0.85rem;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 0.45em 1em;
+  }
+
+  .strategy b { color: var(--terra); }
+
+  /* alerts */
+  .alerts {
+    margin-top: 2.6rem;
+  }
+
+  .alerts-title {
+    font-size: 1.5rem;
+    font-weight: 680;
+    margin-bottom: 0.8rem;
+  }
+
+  .alerts ul {
+    list-style: none;
+    margin: 0;
+    padding: 1.1rem 1.3rem;
+    border: 2px solid var(--terra);
+    border-radius: 12px;
+    background: color-mix(in srgb, var(--terra) 5%, var(--card));
+    display: grid;
+    gap: 0.65rem;
+  }
+
+  .alerts li {
+    display: flex;
+    align-items: baseline;
+    gap: 0.7rem;
+  }
+
+  .alerts a {
+    text-decoration-color: color-mix(in srgb, var(--terra) 50%, transparent);
+    text-underline-offset: 3px;
+  }
+
+  .alerts a:hover { color: var(--terra); }
+
+  /* toc */
+  .toc {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 0.7rem;
+    margin-top: 2.4rem;
+  }
+
+  .toc a {
+    display: flex;
+    align-items: baseline;
+    gap: 0.7rem;
+    text-decoration: none;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-left: 5px solid var(--cat, var(--ink));
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .toc a:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px -12px rgb(70 45 10 / 0.45);
+  }
+
+  .toc-num {
+    font-family: var(--font-display);
+    font-style: italic;
+    color: var(--cat, var(--ink));
+  }
+
+  .toc-label {
+    flex: 1;
+    font-weight: 760;
+    font-size: 0.92rem;
+  }
+
+  .toc-count {
+    font-family: var(--font-display);
+    font-style: italic;
+    color: var(--ink-soft);
+  }
+
+  .toc-plan { border-left-color: var(--ink); background: var(--ink); color: var(--paper); }
+  .toc-plan .toc-num, .toc-plan .toc-count { color: var(--gold); }
+</style>
