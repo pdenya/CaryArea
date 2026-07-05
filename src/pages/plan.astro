@@ -136,7 +136,15 @@ const ruledOut = [
     font-weight: 650;
   }
 
-  h1 em { font-style: italic; font-weight: 420; color: var(--terra); }
+  h1 em {
+    font-style: italic;
+    font-weight: 420;
+    background: var(--grad-sunset);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+  }
 
   .lede {
     font-size: 1.15rem;
@@ -169,10 +177,19 @@ const ruledOut = [
     .timeline li { grid-template-columns: 1fr; gap: 0.6rem; }
   }
 
-  .day-tag { border-right: 3px solid var(--gold); padding-right: 1rem; }
+  .day-tag {
+    border-right: 3px solid transparent;
+    border-image: var(--grad-sunset) 1;
+    padding-right: 1rem;
+  }
 
   @media (max-width: 620px) {
-    .day-tag { border-right: none; border-bottom: 3px solid var(--gold); padding: 0 0 0.5rem; }
+    .day-tag {
+      border-right: none;
+      border-bottom: 3px solid transparent;
+      border-image: var(--grad-sunset) 1;
+      padding: 0 0 0.5rem;
+    }
   }
 
   .day-name {
@@ -181,7 +198,11 @@ const ruledOut = [
     font-style: italic;
     font-size: 2.4rem;
     line-height: 1;
-    color: var(--terra);
+    background: var(--grad-sunset);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
   }
 
   .day-body h2 { font-size: 1.5rem; font-weight: 680; margin-bottom: 0.4rem; }
@@ -210,7 +231,12 @@ const ruledOut = [
   .panel ul { margin: 0; padding-left: 1.2em; }
   .panel li { margin-bottom: 0.55em; }
 
-  .decisions { border: 2px solid var(--terra); background: color-mix(in srgb, var(--terra) 5%, var(--card)); }
+  .decisions {
+    border: 2px solid transparent;
+    background:
+      linear-gradient(color-mix(in srgb, var(--terra) 5%, var(--card)), color-mix(in srgb, var(--terra) 5%, var(--card))) padding-box,
+      var(--grad-sunset) border-box;
+  }
   .decisions li::marker { color: var(--terra); }
   .decisions a { text-underline-offset: 3px; }
   .decisions a:hover { color: var(--terra); }

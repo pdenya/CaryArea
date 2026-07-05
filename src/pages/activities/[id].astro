@@ -34,7 +34,7 @@ const picks = [0, 1, 2]
 ---
 
 <Base title={d.title} description={d.blurb}>
-  <article class="wrap detail" style={`--cat:${cat.color}`}>
+  <article class="wrap detail" style={`--cat:${cat.color};--cat-grad:${cat.grad}`}>
     <nav class="crumbs meta-caps">
       <a href={withBase('/')}>← All ideas</a>
       <span aria-hidden="true">/</span>
@@ -103,7 +103,8 @@ const picks = [0, 1, 2]
   .crumb-cat { color: var(--cat); }
 
   .detail-head {
-    border-bottom: 3px solid var(--cat);
+    border-bottom: 3px solid transparent;
+    border-image: var(--cat-grad) 1;
     padding-bottom: 1.4rem;
     margin-bottom: 2rem;
   }
@@ -137,14 +138,16 @@ const picks = [0, 1, 2]
 
   .detail-cols {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 300px;
-    gap: clamp(1.5rem, 4vw, 3.5rem);
+    grid-template-columns: 1fr;
+    gap: 2rem;
     align-items: start;
   }
 
-  @media (max-width: 800px) {
-    .detail-cols { grid-template-columns: 1fr; }
-    .facts { position: static; }
+  @media (min-width: 820px) {
+    .detail-cols {
+      grid-template-columns: minmax(0, 1fr) 300px;
+      gap: clamp(1.5rem, 4vw, 3.5rem);
+    }
   }
 
   .warning {
@@ -158,13 +161,17 @@ const picks = [0, 1, 2]
   .warning p { margin: 0.3em 0 0; }
 
   .facts {
-    position: sticky;
-    top: 90px;
-    background: var(--card);
-    border: 1px solid var(--line);
-    border-top: 5px solid var(--cat);
-    border-radius: 10px;
+    position: static;
+    border: 2px solid transparent;
+    border-radius: 14px;
+    background:
+      linear-gradient(var(--card), var(--card)) padding-box,
+      var(--cat-grad) border-box;
     padding: 1.2rem 1.3rem 1.4rem;
+  }
+
+  @media (min-width: 820px) {
+    .facts { position: sticky; top: 84px; }
   }
 
   .facts dl { margin: 0 0 1.1rem; }

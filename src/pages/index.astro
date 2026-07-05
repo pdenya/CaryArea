@@ -2,16 +2,17 @@
 import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import ActivityCard from '../components/ActivityCard.astro';
-import { CATEGORIES, CATEGORY_ORDER, eventDay, withBase } from '../lib/site';
+import { CATEGORIES, CATEGORY_ORDER, appeal, eventDay, withBase } from '../lib/site';
 
 const all = await getCollection('activities');
 
 const byCategory = CATEGORY_ORDER.map((key) => {
   const items = all.filter((a) => a.data.category === key);
-  items.sort((a, b) =>
-    key === 'events'
-      ? eventDay(a.data.date) - eventDay(b.data.date) || a.data.title.localeCompare(b.data.title)
-      : a.data.title.localeCompare(b.data.title)
+  items.sort(
+    (a, b) =>
+      appeal(b.id) - appeal(a.id) ||
+      (key === 'events' ? eventDay(a.data.date) - eventDay(b.data.date) : 0) ||
+      a.data.title.localeCompare(b.data.title)
   );
   return { key, ...CATEGORIES[key], items };
 });
@@ -59,7 +60,7 @@ const alerts = [
 
   <nav class="wrap toc" aria-label="Categories">
     {byCategory.map((c) => (
-      <a href={withBase(`/#${c.key}`)} style={`--cat:${c.color}`}>
+      <a href={withBase(`/#${c.key}`)} style={`--cat:${c.color};--cat-grad:${c.grad}`}>
         <span class="toc-num">{c.num}</span>
         <span class="toc-label">{c.label}</span>
         <span class="toc-count">{c.items.length}</span>
@@ -75,7 +76,7 @@ const alerts = [
   <main class="wrap">
     {byCategory.map((c) => (
       <section class="cat-section" id={c.key}>
-        <header class="cat-header" style={`--cat:${c.color}`}>
+        <header class="cat-header" style={`--cat:${c.color};--cat-grad:${c.grad}`}>
           <span class="cat-num">{c.num}</span>
           <h2>{c.label}</h2>
           <span class="cat-count">× {c.items.length}</span>
@@ -132,7 +133,11 @@ const alerts = [
   h1 em {
     font-style: italic;
     font-weight: 420;
-    color: var(--terra);
+    background: var(--grad-sunset);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
   }
 
   .lede {
@@ -149,6 +154,9 @@ const alerts = [
   }
 
   .strategy span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
     font-size: 0.85rem;
     background: var(--card);
     border: 1px solid var(--line);
@@ -156,7 +164,16 @@ const alerts = [
     padding: 0.45em 1em;
   }
 
-  .strategy b { color: var(--terra); }
+  .strategy span::before {
+    content: '';
+    width: 0.5em;
+    height: 0.5em;
+    border-radius: 50%;
+    background: var(--grad-sunset);
+    flex: none;
+  }
+
+  .strategy b { color: var(--terra); white-space: nowrap; }
 
   /* alerts */
   .alerts {
@@ -167,15 +184,23 @@ const alerts = [
     font-size: 1.5rem;
     font-weight: 680;
     margin-bottom: 0.8rem;
+    width: max-content;
+    background: var(--grad-sunset);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
   }
 
   .alerts ul {
     list-style: none;
     margin: 0;
     padding: 1.1rem 1.3rem;
-    border: 2px solid var(--terra);
-    border-radius: 12px;
-    background: color-mix(in srgb, var(--terra) 5%, var(--card));
+    border: 2px solid transparent;
+    border-radius: 14px;
+    background:
+      linear-gradient(color-mix(in srgb, var(--terra) 5%, var(--card)), color-mix(in srgb, var(--terra) 5%, var(--card))) padding-box,
+      var(--grad-sunset) border-box;
     display: grid;
     gap: 0.65rem;
   }
@@ -196,33 +221,62 @@ const alerts = [
   /* toc */
   .toc {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 0.7rem;
-    margin-top: 2.4rem;
+    grid-template-columns: 1fr;
+    gap: 0.6rem;
+    margin-top: 2.2rem;
+  }
+
+  @media (min-width: 520px) {
+    .toc { grid-template-columns: repeat(auto-fill, minmax(228px, 1fr)); gap: 0.7rem; }
   }
 
   .toc a {
+    position: relative;
     display: flex;
     align-items: baseline;
     gap: 0.7rem;
     text-decoration: none;
     background: var(--card);
     border: 1px solid var(--line);
-    border-left: 5px solid var(--cat, var(--ink));
-    border-radius: 8px;
-    padding: 0.75rem 1rem;
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    border-radius: 12px;
+    padding: 0.85rem 1rem;
+    overflow: hidden;
+    transition: border-color 0.2s ease, background-color 0.2s ease;
   }
 
-  .toc a:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 20px -12px rgb(70 45 10 / 0.45);
+  /* gradient baseline that sweeps across on hover/tap — replaces the edge bar */
+  .toc a::after {
+    content: '';
+    position: absolute;
+    left: 1rem;
+    bottom: 0;
+    height: 3px;
+    width: 1.7rem;
+    border-radius: 3px 3px 0 0;
+    background: var(--cat-grad);
+    transition: width 0.28s ease;
+  }
+
+  .toc a:active { border-color: color-mix(in srgb, var(--cat) 50%, var(--line)); }
+  .toc a:active::after { width: calc(100% - 2rem); }
+
+  @media (hover: hover) {
+    .toc a:hover {
+      border-color: color-mix(in srgb, var(--cat) 45%, var(--line));
+      background: color-mix(in srgb, var(--cat) 5%, var(--card));
+    }
+    .toc a:hover::after { width: calc(100% - 2rem); }
+    .toc a:hover .toc-count { transform: translateX(3px); }
   }
 
   .toc-num {
     font-family: var(--font-display);
     font-style: italic;
-    color: var(--cat, var(--ink));
+    background: var(--cat-grad);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
   }
 
   .toc-label {
@@ -234,9 +288,28 @@ const alerts = [
   .toc-count {
     font-family: var(--font-display);
     font-style: italic;
-    color: var(--ink-soft);
+    background: var(--cat-grad);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    transition: transform 0.2s ease;
   }
 
-  .toc-plan { border-left-color: var(--ink); background: var(--ink); color: var(--paper); }
-  .toc-plan .toc-num, .toc-plan .toc-count { color: var(--gold); }
+  /* a.toc-plan to outrank the base `.toc a` background */
+  .toc a.toc-plan {
+    /* darker end of the sunset so white text stays legible */
+    background: linear-gradient(105deg, #ff6a2b, #e6186c);
+    border-color: transparent;
+    color: #fff;
+  }
+
+  .toc a.toc-plan .toc-num,
+  .toc a.toc-plan .toc-count {
+    background: none;
+    -webkit-text-fill-color: #fff;
+    color: #fff;
+  }
+
+  .toc a.toc-plan::after { background: rgba(255, 255, 255, 0.92); }
 </style>

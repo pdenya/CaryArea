@@ -12,7 +12,7 @@ const cat = CATEGORIES[category];
 const heatInfo = HEAT[heat];
 ---
 
-<a class="activity-card" href={withBase(`/activities/${activity.id}/`)} style={`--cat:${cat.color}`}>
+<a class="activity-card" href={withBase(`/activities/${activity.id}/`)} style={`--cat:${cat.color};--cat-grad:${cat.grad}`}>
   <div class="card-top">
     <h3>{title}</h3>
     <span class="heat-badge" style={`--c:${heatInfo.color}`}>{heatInfo.label}</span>
@@ -24,5 +24,6 @@ const heatInfo = HEAT[heat];
     <span class="meta-caps" style="color:var(--ink);">{cost}</span>
     {bookAhead && <span class="flag flag-book">Book ahead</span>}
     {warning && <span class="flag flag-warn">Heads up</span>}
+    <span class="go" aria-hidden="true">↗</span>
   </div>
 </a>
