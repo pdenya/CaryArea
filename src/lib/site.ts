@@ -103,15 +103,23 @@ export function eventDay(date?: string): number {
 export const APPEAL: Record<string, number> = {
   // events
   'boardwalk-blast-fireworks': 95,
+  'wake-county-speedway': 88,
+  'nc-courage': 85,
   'wicked-moore-square': 82,
   'dix-park-car-showcase': 80,
   'deadlock-pro-wrestling': 78,
+  'wilson-warbirds': 72,
+  'zebulon-devil-dogz': 68,
+  'comedyworx': 65,
+  'raleigh-astronomy-club': 62,
   'rhythm-and-reels': 60,
   'carolina-theatre-retro-days': 58,
+  'first-flight-archery': 56,
   'usa-baseball-14u': 55,
   'cary-theater-family-series': 52,
   'koka-booth-sidecar': 50,
   'raleigh-iron-works-market': 48,
+  'wake-county-libraries': 44,
   'dpac-shows': 42,
   'saturday-farmers-markets': 40,
   // water
@@ -161,6 +169,11 @@ export const APPEAL: Record<string, number> = {
   'museum-of-durham-history': 50,
   'ncma-museum-park': 42,
   'nasher-museum': 40,
+  'shopspace-blacksmithing': 38,
+  'amazing-glaze': 36,
+  'candle-pour-bars': 34,
+  'pins-mechanical': 32,
+  'urban-air-apex': 30,
   // outdoor
   'topgolf-durham': 95,
   'xtreme-park-adventures': 88,
@@ -184,6 +197,7 @@ export const APPEAL: Record<string, number> = {
   'jc-raulston-arboretum': 40,
   'duke-chapel': 38,
   'historic-yates-mill': 36,
+  'spring-haven-farm': 34,
   // hikes
   'eno-fews-ford': 90,
   'eno-cole-mill': 88,
@@ -213,7 +227,12 @@ export const APPEAL: Record<string, number> = {
   'players-retreat': 48,
   // daytrips
   'carolina-beach-overnight': 95,
+  'nc-aquarium-fort-fisher': 78,
+  'nc-transportation-museum': 72,
+  'conservators-center': 70,
   'raleigh-road-drive-in': 68,
+  'sylvan-heights-bird-park': 64,
+  'aloha-safari-park': 62,
   'saxapahaw-day-trip': 60,
 };
 
