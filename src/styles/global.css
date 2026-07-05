@@ -245,37 +245,39 @@ p { margin: 0 0 1em; }
   display: flex;
   flex-direction: column;
   gap: 0.55rem;
-  background: var(--card);
-  border: 1px solid var(--line);
+  background: color-mix(in srgb, var(--cat) 6%, var(--card));
+  border: 1px solid color-mix(in srgb, var(--cat) 32%, var(--line));
   border-radius: 14px;
   padding: 1.05rem 1.15rem 1.15rem;
   text-decoration: none;
   overflow: hidden;
   isolation: isolate;
-  transition: border-color 0.2s ease;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
 }
 
-/* loud corner bloom in the category gradient — no lazy top bar */
+/* each tile carries an always-on corner bloom in its own accent, so squares
+   read as individual even at rest; it deepens on hover/tap */
 .activity-card::before {
   content: '';
   position: absolute;
   inset: 0;
   z-index: -1;
   background: var(--cat-grad);
-  opacity: 0;
+  opacity: 0.08;
   -webkit-mask: radial-gradient(125% 90% at 100% 0%, #000, transparent 62%);
   mask: radial-gradient(125% 90% at 100% 0%, #000, transparent 62%);
   transition: opacity 0.25s ease;
 }
 
 .activity-card:active { border-color: var(--cat); }
-.activity-card:active::before { opacity: 0.16; }
+.activity-card:active::before { opacity: 0.22; }
 
 @media (hover: hover) {
   .activity-card:hover {
-    border-color: color-mix(in srgb, var(--cat) 55%, var(--line));
+    border-color: color-mix(in srgb, var(--cat) 60%, var(--line));
+    background-color: color-mix(in srgb, var(--cat) 9%, var(--card));
   }
-  .activity-card:hover::before { opacity: 0.1; }
+  .activity-card:hover::before { opacity: 0.17; }
 }
 
 .activity-card .card-top {

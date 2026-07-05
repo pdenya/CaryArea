@@ -219,3 +219,22 @@ export const APPEAL: Record<string, number> = {
 
 /** Ordering weight for a pick; unknown slugs sink to the bottom. */
 export const appeal = (id: string) => APPEAL[id] ?? 0;
+
+/**
+ * Loud-summer accent palette rotated across cards so adjacent tiles differ —
+ * each square reads as its own thing. Category identity lives in the section
+ * header, so cards are free to be a coordinated patchwork.
+ */
+export const TILES: { color: string; grad: string }[] = [
+  { color: '#e6186c', grad: 'linear-gradient(105deg, #ff6aa8, #e6186c)' }, // magenta
+  { color: '#0f93a3', grad: 'linear-gradient(105deg, #33d6dc, #0f8090)' }, // teal
+  { color: '#e5651f', grad: 'linear-gradient(105deg, #ffb35a, #e5652f)' }, // tangerine
+  { color: '#3f6fd6', grad: 'linear-gradient(105deg, #6d8bff, #3a5fc0)' }, // cobalt
+  { color: '#4a9a3f', grad: 'linear-gradient(105deg, #8ad46a, #3f8a43)' }, // lime
+  { color: '#d8a11f', grad: 'linear-gradient(105deg, #ffd23a, #e59a1f)' }, // sunflower
+  { color: '#c2431e', grad: 'linear-gradient(105deg, #ff8f3a, #d2431e)' }, // coral-red
+  { color: '#8a4bd0', grad: 'linear-gradient(105deg, #b78bff, #7d3fd0)' }, // violet
+];
+
+/** Stable tile accent for a card at a given running position. */
+export const tile = (i: number) => TILES[((i % TILES.length) + TILES.length) % TILES.length];
