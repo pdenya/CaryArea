@@ -82,7 +82,7 @@ const picks = [0, 1, 2]
       <section class="related">
         <h2>More “{cat.label}”</h2>
         <div class="card-grid">
-          {picks.map((a, i) => <ActivityCard activity={a} index={i} />)}
+          {picks.map((a) => <ActivityCard activity={a} />)}
         </div>
       </section>
     )}

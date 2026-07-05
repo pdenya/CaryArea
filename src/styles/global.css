@@ -283,8 +283,27 @@ p { margin: 0 0 1em; }
 .activity-card .card-top {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
   gap: 0.5rem;
+  margin-bottom: 0.1rem;
+}
+
+/* category-colored glyph — the card's identity at a glance */
+.activity-card .card-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: 11px;
+  color: var(--cat);
+  background: color-mix(in srgb, var(--cat) 15%, var(--card));
+  border: 1px solid color-mix(in srgb, var(--cat) 28%, var(--line));
+}
+
+.activity-card .card-icon svg {
+  width: 1.4rem;
+  height: 1.4rem;
 }
 
 .activity-card h3 {

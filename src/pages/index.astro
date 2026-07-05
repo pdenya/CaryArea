@@ -74,7 +74,7 @@ const alerts = [
   </nav>
 
   <main class="wrap">
-    {byCategory.map((c, ci) => (
+    {byCategory.map((c) => (
       <section class="cat-section" id={c.key}>
         <header class="cat-header" style={`--cat:${c.color};--cat-grad:${c.grad}`}>
           <span class="cat-num">{c.num}</span>
@@ -83,7 +83,7 @@ const alerts = [
           <span class="cat-desc">{c.desc}</span>
         </header>
         <div class="card-grid">
-          {c.items.map((activity, i) => <ActivityCard activity={activity} index={i + ci * 3} />)}
+          {c.items.map((activity) => <ActivityCard activity={activity} />)}
         </div>
       </section>
     ))}
