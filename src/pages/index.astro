@@ -7,7 +7,7 @@ import { CATEGORIES, CATEGORY_ORDER, appeal, eventDay, withBase } from '../lib/s
 const all = await getCollection('activities');
 
 /* ——— Location filter setup ——— */
-const LOCATION_GROUPS = ['Cary', 'Apex', 'Raleigh', 'Durham', 'Chapel Hill'] as const;
+const LOCATION_GROUPS = ['Cary', 'Apex', 'Morrisville', 'Raleigh', 'Durham', 'Chapel Hill'] as const;
 
 // Collect all unique areas for the "Other" bucket
 const allAreas = [...new Set(all.map((a) => a.data.area))];
@@ -406,21 +406,25 @@ const alerts = [
     const pills = document.querySelectorAll('.filter-pill');
     const countEl = document.getElementById('filter-count');
     const sections = document.querySelectorAll('.cat-section');
+    const activeLocs = new Set();
 
-    function applyFilter(loc) {
+    function applyFilter() {
       const cards = document.querySelectorAll('.activity-card[data-area]');
       let shown = 0;
       let total = cards.length;
+      const isAll = activeLocs.size === 0;
 
       cards.forEach((card) => {
         const area = card.getAttribute('data-area') || '';
-        let match = true;
+        let match = isAll;
 
-        if (loc !== 'all') {
-          if (loc === 'other') {
-            match = !LOCATION_GROUPS.some((g) => area.includes(g));
-          } else {
-            match = area.includes(loc);
+        if (!isAll) {
+          for (const loc of activeLocs) {
+            if (loc === 'other') {
+              if (!LOCATION_GROUPS.some((g) => area.includes(g))) { match = true; break; }
+            } else {
+              if (area.includes(loc)) { match = true; break; }
+            }
           }
         }
 
@@ -428,28 +432,32 @@ const alerts = [
         if (match) shown++;
       });
 
-      // hide sections where all cards are hidden
       sections.forEach((section) => {
         const visibleCards = section.querySelectorAll('.activity-card:not(.location-hidden)');
         section.classList.toggle('section-hidden', visibleCards.length === 0);
       });
 
-      // update count
-      if (loc === 'all') {
-        countEl.textContent = '';
-      } else {
-        countEl.textContent = `${shown} of ${total}`;
-      }
+      countEl.textContent = isAll ? '' : `${shown} of ${total}`;
 
-      // update pills
       pills.forEach((p) => {
-        p.classList.toggle('active', p.getAttribute('data-loc') === loc);
+        const loc = p.getAttribute('data-loc');
+        p.classList.toggle('active', loc === 'all' ? isAll : activeLocs.has(loc));
       });
     }
 
     pills.forEach((pill) => {
       pill.addEventListener('click', () => {
-        applyFilter(pill.getAttribute('data-loc'));
+        const loc = pill.getAttribute('data-loc');
+        if (loc === 'all') {
+          activeLocs.clear();
+        } else {
+          if (activeLocs.has(loc)) {
+            activeLocs.delete(loc);
+          } else {
+            activeLocs.add(loc);
+          }
+        }
+        applyFilter();
       });
     });
   });
