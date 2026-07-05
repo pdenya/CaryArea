@@ -6,6 +6,16 @@ import { CATEGORIES, CATEGORY_ORDER, appeal, eventDay, withBase } from '../lib/s
 
 const all = await getCollection('activities');
 
+/* ——— Location filter setup ——— */
+const LOCATION_GROUPS = ['Cary', 'Apex', 'Raleigh', 'Durham', 'Chapel Hill'] as const;
+
+// Collect all unique areas for the "Other" bucket
+const allAreas = [...new Set(all.map((a) => a.data.area))];
+const otherAreas = allAreas.filter(
+  (area) => !LOCATION_GROUPS.some((loc) => area.includes(loc))
+);
+const hasOther = otherAreas.length > 0;
+
 const byCategory = CATEGORY_ORDER.map((key) => {
   const items = all.filter((a) => a.data.category === key);
   items.sort(
@@ -73,6 +83,18 @@ const alerts = [
     </a>
   </nav>
 
+  <div class="wrap filter-bar" id="location-filter">
+    <span class="filter-label meta-caps">Filter by area</span>
+    <div class="filter-pills">
+      <button class="filter-pill active" data-loc="all">All</button>
+      {LOCATION_GROUPS.map((loc) => (
+        <button class="filter-pill" data-loc={loc}>{loc}</button>
+      ))}
+      {hasOther && <button class="filter-pill" data-loc="other">Other</button>}
+    </div>
+    <span class="filter-count" id="filter-count"></span>
+  </div>
+
   <main class="wrap">
     {byCategory.map((c) => (
       <section class="cat-section" id={c.key}>
@@ -83,7 +105,7 @@ const alerts = [
           <span class="cat-desc">{c.desc}</span>
         </header>
         <div class="card-grid">
-          {c.items.map((activity) => <ActivityCard activity={activity} />)}
+          {c.items.map((activity, i) => <ActivityCard activity={activity} featured={i === 0} />)}
         </div>
       </section>
     ))}
@@ -312,4 +334,123 @@ const alerts = [
   }
 
   .toc a.toc-plan::after { background: rgba(255, 255, 255, 0.92); }
+
+  /* ————— location filter bar ————— */
+  .filter-bar {
+    position: sticky;
+    top: 52px;
+    z-index: 90;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem 1rem;
+    margin-top: 1.6rem;
+    padding-top: 0.7rem;
+    padding-bottom: 0.7rem;
+    background: color-mix(in srgb, var(--paper) 90%, transparent);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--line-soft);
+  }
+
+  .filter-label {
+    color: var(--ink-soft);
+    flex: none;
+  }
+
+  .filter-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+  }
+
+  .filter-pill {
+    font-family: var(--font-body);
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    background: var(--card);
+    border: 1.5px solid var(--line);
+    border-radius: 999px;
+    padding: 0.32em 0.85em;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+    color: var(--ink-soft);
+  }
+
+  .filter-pill:hover {
+    border-color: var(--ink-soft);
+    color: var(--ink);
+  }
+
+  .filter-pill.active {
+    background: var(--grad-sunset);
+    border-color: transparent;
+    color: #fff;
+  }
+
+  .filter-count {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: 0.88rem;
+    color: var(--ink-soft);
+  }
+
+  /* hide filtered-out cards & empty sections */
+  :global(.activity-card.location-hidden) { display: none !important; }
+  :global(.cat-section.section-hidden) { display: none !important; }
 </style>
+
+<script define:vars={{ LOCATION_GROUPS, otherAreas }}>
+  document.addEventListener('DOMContentLoaded', () => {
+    const pills = document.querySelectorAll('.filter-pill');
+    const countEl = document.getElementById('filter-count');
+    const sections = document.querySelectorAll('.cat-section');
+
+    function applyFilter(loc) {
+      const cards = document.querySelectorAll('.activity-card[data-area]');
+      let shown = 0;
+      let total = cards.length;
+
+      cards.forEach((card) => {
+        const area = card.getAttribute('data-area') || '';
+        let match = true;
+
+        if (loc !== 'all') {
+          if (loc === 'other') {
+            match = !LOCATION_GROUPS.some((g) => area.includes(g));
+          } else {
+            match = area.includes(loc);
+          }
+        }
+
+        card.classList.toggle('location-hidden', !match);
+        if (match) shown++;
+      });
+
+      // hide sections where all cards are hidden
+      sections.forEach((section) => {
+        const visibleCards = section.querySelectorAll('.activity-card:not(.location-hidden)');
+        section.classList.toggle('section-hidden', visibleCards.length === 0);
+      });
+
+      // update count
+      if (loc === 'all') {
+        countEl.textContent = '';
+      } else {
+        countEl.textContent = `${shown} of ${total}`;
+      }
+
+      // update pills
+      pills.forEach((p) => {
+        p.classList.toggle('active', p.getAttribute('data-loc') === loc);
+      });
+    }
+
+    pills.forEach((pill) => {
+      pill.addEventListener('click', () => {
+        applyFilter(pill.getAttribute('data-loc'));
+      });
+    });
+  });
+</script>
