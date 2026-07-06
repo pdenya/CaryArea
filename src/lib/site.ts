@@ -141,6 +141,7 @@ export const APPEAL: Record<string, number> = {
   // indoor
   'andretti-karting-durham': 96,
   'dave-and-busters-cary': 95,
+  'hooky-entertainment': 90,
   'rush-hour-karting': 93,
   'defy-raleigh': 92,
   'apex-racing-lab': 88,
@@ -150,6 +151,7 @@ export const APPEAL: Record<string, number> = {
   'xcape-reality': 78,
   'polar-ice-cary': 76,
   'museum-of-life-and-science': 75,
+  'partee-shack': 75,
   'moonwalk-mini-golf': 74,
   'bull-city-escape': 73,
   'boxcar-bar-arcade': 72,
@@ -184,6 +186,7 @@ export const APPEAL: Record<string, number> = {
   'whole-brain-escape': 14,
   'rock-solid-warrior': 12,
   // outdoor
+  'gipson-play-plaza': 96,
   'topgolf-durham': 95,
   'xtreme-park-adventures': 88,
   'go-ape-blue-jay-point': 85,
@@ -193,6 +196,7 @@ export const APPEAL: Record<string, number> = {
   'wheels-fun-park': 74,
   'pullen-park': 72,
   'blue-diamond-gem-panning': 68,
+  'dix-park-trolls': 70,
   'rdu-observation-park': 66,
   'fenton': 64,
   'downtown-cary-park': 62,
@@ -223,6 +227,7 @@ export const APPEAL: Record<string, number> = {
   'raven-rock': 48,
   // food
   'kanki-hibachi': 95,
+  'crooked-hammock-brewery': 90,
   'five-spice-korean-bbq': 88,
   'boba-crawl': 82,
   'cary-dessert-crawl': 80,
@@ -230,6 +235,8 @@ export const APPEAL: Record<string, number> = {
   'boxyard-rtp': 72,
   'superica': 70,
   'durham-treat-crawl': 68,
+  'botiwalla': 69,
+  'lawrence-barbecue': 67,
   'prime-barbecue': 66,
   'sunni-skys': 64,
   'taipei-101': 60,
