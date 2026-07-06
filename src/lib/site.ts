@@ -174,6 +174,15 @@ export const APPEAL: Record<string, number> = {
   'candle-pour-bars': 34,
   'pins-mechanical': 32,
   'urban-air-apex': 30,
+  'meeples-brew': 28,
+  'altitude-trampoline-park': 26,
+  'game-on-escapes': 24,
+  'flour-power-cooking': 22,
+  'color-me-mine': 20,
+  'x-golf-cary': 18,
+  'drive-shack-puttery': 16,
+  'whole-brain-escape': 14,
+  'rock-solid-warrior': 12,
   // outdoor
   'topgolf-durham': 95,
   'xtreme-park-adventures': 88,
@@ -198,6 +207,7 @@ export const APPEAL: Record<string, number> = {
   'duke-chapel': 38,
   'historic-yates-mill': 36,
   'spring-haven-farm': 34,
+  'knights-play-golf': 32,
   // hikes
   'eno-fews-ford': 90,
   'eno-cole-mill': 88,
