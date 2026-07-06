@@ -2,11 +2,12 @@
 title: "Deadlock Pro Wrestling"
 blurb: Cult-favorite indie wrestling with big production values — pure teen catnip if a show lands during your week
 category: events
-area: Raleigh
+area: Cary
 cost: Varies
 heat: timing
-mapUrl: https://www.google.com/maps/search/Deadlock+Pro+Wrestling+Raleigh
+mapUrl: https://maps.google.com/?q=SportHQ+107+Edinburgh+S+Dr+Cary+NC
 date: "Check dpwrestling.com"
+warning: "DPW announced an indefinite hiatus after Dec 2025 — verify status before planning around it"
 ---
 
 Deadlock Pro Wrestling is the Triangle's cult-favorite indie wrestling promotion, and Reddit locals rave about the production quality. It is pure teen catnip — an up-close indie wrestling show is the kind of night teens talk about for months, and it's a lot more fun for the adults than they'll expect.
