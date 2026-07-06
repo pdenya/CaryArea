@@ -14,9 +14,7 @@ const { title, blurb, category, area, cost, heat, date, warning, bookAhead } = a
 const cat = CATEGORIES[category];
 const icon = iconFor(activity.id, category);
 
-/* ——— Date → trip days (Jul 7=Tue … Jul 11=Sat) ——— */
-const DOW_TO_DAY: Record<string, number> = { Tue: 7, Wed: 8, Thu: 9, Fri: 10, Sat: 11 };
-
+/* ——— Date → trip days (Jul 5=Sat … Jul 11=Sat) ——— */
 function parseTripDays(d?: string): number[] {
   if (!d) return [];
   const lc = d.toLowerCase();
@@ -24,16 +22,19 @@ function parseTripDays(d?: string): number[] {
 
   const days = new Set<number>();
 
-  // "Jul N" or "7/N" patterns
+  // "Jul N" or "7/N" patterns — authoritative
   for (const m of d.matchAll(/(?:Jul\s+|7\/)(\d{1,2})/gi)) {
     const n = parseInt(m[1], 10);
-    if (n >= 7 && n <= 11) days.add(n);
+    if (n >= 5 && n <= 12) days.add(n);
   }
 
-  // Day-of-week abbreviations
-  for (const m of d.matchAll(/\b(Tue|Wed|Thu|Fri|Sat)\b/gi)) {
-    const key = m[1].charAt(0).toUpperCase() + m[1].slice(1).toLowerCase();
-    if (DOW_TO_DAY[key]) days.add(DOW_TO_DAY[key]);
+  // Day-of-week abbreviations as fallback (only when no explicit Jul dates found)
+  if (days.size === 0) {
+    const DOW_TO_DAY: Record<string, number> = { Tue: 7, Wed: 8, Thu: 9, Fri: 10, Sat: 11 };
+    for (const m of d.matchAll(/\b(Tue|Wed|Thu|Fri|Sat)\b/gi)) {
+      const key = m[1].charAt(0).toUpperCase() + m[1].slice(1).toLowerCase();
+      if (DOW_TO_DAY[key]) days.add(DOW_TO_DAY[key]);
+    }
   }
 
   // Range fill: "Jul 8 – Fri Jul 10" or "7/7–Sun 7/12" → fill between endpoints
@@ -42,7 +43,7 @@ function parseTripDays(d?: string): number[] {
     const a = parseInt(rangeMatch[1], 10);
     const b = parseInt(rangeMatch[2], 10);
     for (let i = Math.min(a, b); i <= Math.max(a, b); i++) {
-      if (i >= 7 && i <= 11) days.add(i);
+      if (i >= 5 && i <= 12) days.add(i);
     }
   }
 
