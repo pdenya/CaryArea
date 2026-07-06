@@ -139,6 +139,7 @@ export const APPEAL: Record<string, number> = {
   'jack-smith-splash-pad': 50,
   'ymca-trial-pass': 45,
   // indoor
+  'andretti-karting-durham': 96,
   'dave-and-busters-cary': 95,
   'rush-hour-karting': 93,
   'defy-raleigh': 92,
