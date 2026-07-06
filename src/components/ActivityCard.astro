@@ -14,6 +14,44 @@ const { title, blurb, category, area, cost, heat, date, warning, bookAhead } = a
 const cat = CATEGORIES[category];
 const icon = iconFor(activity.id, category);
 
+/* ——— Date → trip days (Jul 7=Tue … Jul 11=Sat) ——— */
+const DOW_TO_DAY: Record<string, number> = { Tue: 7, Wed: 8, Thu: 9, Fri: 10, Sat: 11 };
+
+function parseTripDays(d?: string): number[] {
+  if (!d) return [];
+  const lc = d.toLowerCase();
+  if (lc.includes('all week')) return [7, 8, 9, 10, 11];
+
+  const days = new Set<number>();
+
+  // "Jul N" or "7/N" patterns
+  for (const m of d.matchAll(/(?:Jul\s+|7\/)(\d{1,2})/gi)) {
+    const n = parseInt(m[1], 10);
+    if (n >= 7 && n <= 11) days.add(n);
+  }
+
+  // Day-of-week abbreviations
+  for (const m of d.matchAll(/\b(Tue|Wed|Thu|Fri|Sat)\b/gi)) {
+    const key = m[1].charAt(0).toUpperCase() + m[1].slice(1).toLowerCase();
+    if (DOW_TO_DAY[key]) days.add(DOW_TO_DAY[key]);
+  }
+
+  // Range fill: "Jul 8 – Fri Jul 10" or "7/7–Sun 7/12" → fill between endpoints
+  const rangeMatch = d.match(/(?:Jul\s+|7\/)(\d{1,2})\s*[–→\-]\s*(?:\w+\s+)?(?:Jul\s+|7\/)(\d{1,2})/i);
+  if (rangeMatch) {
+    const a = parseInt(rangeMatch[1], 10);
+    const b = parseInt(rangeMatch[2], 10);
+    for (let i = Math.min(a, b); i <= Math.max(a, b); i++) {
+      if (i >= 7 && i <= 11) days.add(i);
+    }
+  }
+
+  return [...days].sort((a, b) => a - b);
+}
+
+const tripDays = parseTripDays(date);
+const daysAttr = tripDays.length > 0 ? tripDays.join(',') : 'any';
+
 const HEAT_GLYPH: Record<string, { icon: string; label: string }> = {
   ac: { icon: 'snow', label: 'A/C' },
   water: { icon: 'droplet', label: 'Water' },
@@ -28,6 +66,7 @@ const hg = HEAT_GLYPH[heat] ?? HEAT_GLYPH.timing;
   href={withBase(`/activities/${activity.id}/`)}
   style={`--cat:${cat.color};--grad:${cat.grad}`}
   data-area={area}
+  data-days={daysAttr}
 >
   <span class="medallion"><Icon name={icon} /></span>
 
@@ -60,9 +99,9 @@ const hg = HEAT_GLYPH[heat] ?? HEAT_GLYPH.timing;
     grid-template-columns: auto 1fr;
     gap: 0.95rem;
     align-items: start;
-    background: color-mix(in srgb, var(--cat) 11%, var(--card));
-    border: 1.5px solid color-mix(in srgb, var(--cat) 42%, var(--line));
-    border-left: 6px solid var(--cat);
+    background: var(--card);
+    border: 1.5px solid var(--line);
+    border-left: 5px solid color-mix(in srgb, var(--cat) 70%, var(--line));
     border-radius: 15px;
     padding: 1.05rem 1.1rem;
     text-decoration: none;
@@ -71,14 +110,14 @@ const hg = HEAT_GLYPH[heat] ?? HEAT_GLYPH.timing;
     transition: border-color 0.18s ease, transform 0.12s ease, box-shadow 0.18s ease;
   }
 
-  /* always-on corner bloom in the category gradient */
+  /* subtle corner bloom — just a whisper on regular cards */
   .activity-card::before {
     content: '';
     position: absolute;
     inset: 0;
     z-index: -1;
     background: var(--grad);
-    opacity: 0.1;
+    opacity: 0.04;
     -webkit-mask: radial-gradient(120% 88% at 100% 0%, #000, transparent 60%);
     mask: radial-gradient(120% 88% at 100% 0%, #000, transparent 60%);
   }

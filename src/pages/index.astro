@@ -83,14 +83,27 @@ const alerts = [
     </a>
   </nav>
 
-  <div class="wrap filter-bar" id="location-filter">
-    <span class="filter-label meta-caps">Filter by area</span>
-    <div class="filter-pills">
-      <button class="filter-pill active" data-loc="all">All</button>
-      {LOCATION_GROUPS.map((loc) => (
-        <button class="filter-pill" data-loc={loc}>{loc}</button>
-      ))}
-      {hasOther && <button class="filter-pill" data-loc="other">Other</button>}
+  <div class="wrap filter-bar" id="filter-bar">
+    <div class="filter-row">
+      <span class="filter-label meta-caps">Area</span>
+      <div class="filter-pills">
+        <button class="filter-pill active" data-loc="all">All</button>
+        {LOCATION_GROUPS.map((loc) => (
+          <button class="filter-pill" data-loc={loc}>{loc}</button>
+        ))}
+        {hasOther && <button class="filter-pill" data-loc="other">Other</button>}
+      </div>
+    </div>
+    <div class="filter-row">
+      <span class="filter-label meta-caps">Date</span>
+      <div class="filter-pills">
+        <button class="filter-pill active" data-day="all">Any date</button>
+        <button class="filter-pill" data-day="7">Tue 7/7</button>
+        <button class="filter-pill" data-day="8">Wed 7/8</button>
+        <button class="filter-pill" data-day="9">Thu 7/9</button>
+        <button class="filter-pill" data-day="10">Fri 7/10</button>
+        <button class="filter-pill" data-day="11">Sat 7/11</button>
+      </div>
     </div>
     <span class="filter-count" id="filter-count"></span>
   </div>
@@ -335,26 +348,33 @@ const alerts = [
 
   .toc a.toc-plan::after { background: rgba(255, 255, 255, 0.92); }
 
-  /* ————— location filter bar ————— */
+  /* ————— filter bar ————— */
   .filter-bar {
     position: sticky;
     top: 52px;
     z-index: 90;
     display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 0.5rem 1rem;
+    flex-direction: column;
+    gap: 0.4rem;
     margin-top: 1.6rem;
-    padding-top: 0.7rem;
-    padding-bottom: 0.7rem;
+    padding-top: 0.6rem;
+    padding-bottom: 0.6rem;
     background: color-mix(in srgb, var(--paper) 90%, transparent);
     backdrop-filter: blur(8px);
     border-bottom: 1px solid var(--line-soft);
   }
 
+  .filter-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.4rem 0.7rem;
+  }
+
   .filter-label {
     color: var(--ink-soft);
     flex: none;
+    min-width: 2.8rem;
   }
 
   .filter-pills {
@@ -403,33 +423,50 @@ const alerts = [
 
 <script define:vars={{ LOCATION_GROUPS, otherAreas }}>
   document.addEventListener('DOMContentLoaded', () => {
-    const pills = document.querySelectorAll('.filter-pill');
+    const locPills = document.querySelectorAll('.filter-pill[data-loc]');
+    const dayPills = document.querySelectorAll('.filter-pill[data-day]');
     const countEl = document.getElementById('filter-count');
     const sections = document.querySelectorAll('.cat-section');
     const activeLocs = new Set();
+    let activeDay = null; // null = any date
 
     function applyFilter() {
       const cards = document.querySelectorAll('.activity-card[data-area]');
       let shown = 0;
       let total = cards.length;
-      const isAll = activeLocs.size === 0;
+      const locAll = activeLocs.size === 0;
+      const dayAll = activeDay === null;
+      const isFiltered = !locAll || !dayAll;
 
       cards.forEach((card) => {
         const area = card.getAttribute('data-area') || '';
-        let match = isAll;
+        const days = card.getAttribute('data-days') || 'any';
 
-        if (!isAll) {
+        // location match
+        let locMatch = locAll;
+        if (!locAll) {
           for (const loc of activeLocs) {
             if (loc === 'other') {
-              if (!LOCATION_GROUPS.some((g) => area.includes(g))) { match = true; break; }
+              if (!LOCATION_GROUPS.some((g) => area.includes(g))) { locMatch = true; break; }
             } else {
-              if (area.includes(loc)) { match = true; break; }
+              if (area.includes(loc)) { locMatch = true; break; }
             }
           }
         }
 
-        card.classList.toggle('location-hidden', !match);
-        if (match) shown++;
+        // date match: "any" activities always match, dated activities match if the selected day is in their list
+        let dayMatch = dayAll;
+        if (!dayAll) {
+          if (days === 'any') {
+            dayMatch = true; // undated = available any day
+          } else {
+            dayMatch = days.split(',').includes(activeDay);
+          }
+        }
+
+        const visible = locMatch && dayMatch;
+        card.classList.toggle('location-hidden', !visible);
+        if (visible) shown++;
       });
 
       sections.forEach((section) => {
@@ -437,15 +474,19 @@ const alerts = [
         section.classList.toggle('section-hidden', visibleCards.length === 0);
       });
 
-      countEl.textContent = isAll ? '' : `${shown} of ${total}`;
+      countEl.textContent = isFiltered ? `${shown} of ${total}` : '';
 
-      pills.forEach((p) => {
+      locPills.forEach((p) => {
         const loc = p.getAttribute('data-loc');
-        p.classList.toggle('active', loc === 'all' ? isAll : activeLocs.has(loc));
+        p.classList.toggle('active', loc === 'all' ? locAll : activeLocs.has(loc));
+      });
+      dayPills.forEach((p) => {
+        const day = p.getAttribute('data-day');
+        p.classList.toggle('active', day === 'all' ? dayAll : activeDay === day);
       });
     }
 
-    pills.forEach((pill) => {
+    locPills.forEach((pill) => {
       pill.addEventListener('click', () => {
         const loc = pill.getAttribute('data-loc');
         if (loc === 'all') {
@@ -456,6 +497,18 @@ const alerts = [
           } else {
             activeLocs.add(loc);
           }
+        }
+        applyFilter();
+      });
+    });
+
+    dayPills.forEach((pill) => {
+      pill.addEventListener('click', () => {
+        const day = pill.getAttribute('data-day');
+        if (day === 'all') {
+          activeDay = null;
+        } else {
+          activeDay = activeDay === day ? null : day;
         }
         applyFilter();
       });
